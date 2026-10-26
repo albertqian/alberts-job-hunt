@@ -1,0 +1,50 @@
+# ---------------------------------------------------------------
+# Target-company watchlist.
+#
+# For each company the agent first tries the free public job-board APIs
+# (Greenhouse, Lever, Ashby) using a guessed board name. If none answers,
+# the company is checked through web search instead (slower, costs a search).
+#
+# Optional fields:
+#   ats:  greenhouse | lever | ashby     (skip guessing)
+#   slug: the board name in the careers URL, e.g. boards.greenhouse.io/<slug>
+#   domain: company website, used to focus web search
+#
+# Add, remove or reorder freely. Starter list seeded from your three industries.
+# ---------------------------------------------------------------
+
+companies:
+  # Data, analytics & cloud
+  - {name: Databricks, industry: data, domain: databricks.com, ats: greenhouse, slug: databricks}
+  - {name: Snowflake, industry: data, domain: snowflake.com}
+  - {name: Confluent, industry: data, domain: confluent.io}
+  - {name: dbt Labs, industry: data, domain: getdbt.com, slug: dbtlabs}
+  - {name: Fivetran, industry: data, domain: fivetran.com}
+  - {name: Collibra, industry: data, domain: collibra.com}
+  - {name: Alation, industry: data, domain: alation.com}
+  - {name: Dataiku, industry: data, domain: dataiku.com}
+  - {name: ThoughtSpot, industry: data, domain: thoughtspot.com}
+  - {name: Sigma Computing, industry: data, domain: sigmacomputing.com, slug: sigmacomputing}
+  - {name: Starburst, industry: data, domain: starburst.io}
+  - {name: Microsoft, industry: data, domain: microsoft.com}
+
+  # Decision intelligence & enterprise AI
+  - {name: Pegasystems, industry: decision_ai, domain: pega.com}
+  - {name: FICO, industry: decision_ai, domain: fico.com}
+  - {name: Palantir, industry: decision_ai, domain: palantir.com, ats: lever, slug: palantir}
+  - {name: Quantexa, industry: decision_ai, domain: quantexa.com}
+  - {name: Aera Technology, industry: decision_ai, domain: aeratechnology.com, slug: aeratechnology}
+  - {name: Provenir, industry: decision_ai, domain: provenir.com}
+  - {name: DataRobot, industry: decision_ai, domain: datarobot.com}
+  - {name: C3 AI, industry: decision_ai, domain: c3.ai, slug: c3iot}
+  - {name: Writer, industry: decision_ai, domain: writer.com}
+
+  # HR tech
+  - {name: Workday, industry: hr_tech, domain: workday.com}
+  - {name: Rippling, industry: hr_tech, domain: rippling.com}
+  - {name: Deel, industry: hr_tech, domain: deel.com}
+  - {name: Lattice, industry: hr_tech, domain: lattice.com}
+  - {name: Eightfold AI, industry: hr_tech, domain: eightfold.ai, slug: eightfold}
+  - {name: HiBob, industry: hr_tech, domain: hibob.com}
+  - {name: Gusto, industry: hr_tech, domain: gusto.com}
+  - {name: Greenhouse, industry: hr_tech, domain: greenhouse.com, slug: greenhouse}

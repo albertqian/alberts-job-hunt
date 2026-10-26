@@ -1,0 +1,155 @@
+# ---------------------------------------------------------------
+# Job search profile — edit this file to change what the agent hunts for.
+# ---------------------------------------------------------------
+
+candidate_name: Albert Qian
+
+# Short summary the agent uses when scoring fit and writing positioning advice.
+headline: >
+  B2B SaaS product marketer with 13+ years across Fortune 500 vendors (SAS, Oracle, Cisco, HPE),
+  channel partners and startups. Currently leads product marketing for decision intelligence
+  plus Microsoft and Snowflake partnerships. Builds working AI agents (GitHub Actions) and runs a
+  50K+ member professional community.
+
+# Proof points the agent should lean on when advising positioning.
+proof_points:
+  - Supported analyst relations that resulted in a Leader placement in the Gartner Magic Quadrant for Decision Intelligence
+  - Launched products on Microsoft (Azure Confidential Computing, Fabric) and Snowflake (Snowpark Container Services); helped drive $500K in MQLs
+  - Built and ran a Win Wire program (35+ published) and win/loss analysis program
+  - Ran Oracle HCM Cloud blog program reaching 500K+ page views; HR Matters newsletter drove $275K in MQLs
+  - Builds production AI agents on GitHub Actions (competitive intelligence agent saving 10+ hrs/week)
+  - Founder of Albert's List, 50,700+ members, 550+ webinars, 40,500+ attendees
+  - Native Mandarin; intermediate Spanish
+
+# Roles
+target_titles:
+  - Senior Product Marketing Manager
+  - Principal Product Marketing Manager
+  - Director of Product Marketing
+  - Head of Product Marketing
+
+# Title filter (regular expressions, lowercase). A job title must match one "must_match"
+# AND one "seniority" pattern, and none of the "exclude" patterns.
+title_filter:
+  must_match:
+    - 'product marketing'
+    - '\bpmm\b'
+  seniority:
+    - '\bsenior\b'
+    - '\bsr\.?\b'
+    - '\bprincipal\b'
+    - '\bstaff\b'
+    - '\blead\b'
+    - '\bdirector\b'
+    - '\bhead of\b'
+    - '\bgroup\b'
+  exclude:
+    - '\bassociate\b'
+    - '\bintern\b'
+    - '\bcoordinator\b'
+    - '\bvp\b'
+    - 'vice president'
+    - '\bchief\b'
+
+# Locations
+locations:
+  remote_us: true
+  # A job passes if its location contains any of these (hybrid/on-site OK).
+  hybrid_areas:
+    # Bay Area
+    - san francisco
+    - bay area
+    - san jose
+    - palo alto
+    - mountain view
+    - sunnyvale
+    - santa clara
+    - redwood city
+    - san mateo
+    - menlo park
+    - foster city
+    - south san francisco
+    - oakland
+    - emeryville
+    - berkeley
+    - cupertino
+    - pleasanton
+    - san ramon
+    # Central Coast / SLO
+    - san luis obispo
+    - paso robles
+    - atascadero
+    - arroyo grande
+    - santa maria
+    - santa barbara
+    - goleta
+  # Remote roles mentioning only these regions (and not the US) are dropped.
+  non_us_markers:
+    - canada
+    - united kingdom
+    - "uk"
+    - london
+    - ireland
+    - emea
+    - europe
+    - germany
+    - france
+    - netherlands
+    - spain
+    - poland
+    - israel
+    - india
+    - apac
+    - singapore
+    - japan
+    - australia
+    - latam
+    - mexico
+    - brazil
+
+# Compensation: drop roles whose LISTED max base is below this. Roles without a listed
+# salary are kept and flagged "comp not listed".
+min_base_salary_usd: 135000
+
+# Company types the agent searches for beyond the watchlist.
+company_profile: >
+  B2B enterprise SaaS companies, from Fortune 500 vendors down to post-Series B startups.
+industries:
+  - Data, analytics and cloud platforms (data warehouses, lakehouses, data integration, governance, BI)
+  - Decision intelligence and enterprise AI platforms (decisioning, risk, fraud, AI/ML platforms, agentic AI)
+  - HR tech (HCM, payroll, recruiting, talent intelligence, workforce analytics)
+
+# How many roles to fully score per run (cost control).
+max_jobs_to_score: 20
+# How many listings to ask web search to find per run (beyond the watchlist).
+discovery_target_count: 12
+# Max web searches per run (each costs about $0.01).
+discovery_max_searches: 12
+news_max_searches: 6
+
+# News topics for the industry-direction section and LinkedIn post.
+news_topics:
+  - decision intelligence and AI-driven decisioning
+  - enterprise data and AI platforms (Snowflake, Databricks, Microsoft Fabric, etc.)
+  - agentic AI adoption and governance in the enterprise
+  - HR tech and AI in the workforce
+  - B2B SaaS go-to-market and product marketing trends
+
+# LinkedIn post guardrails
+linkedin:
+  stance: thought_leadership_only
+  point_of_view: >
+    Balanced on AI with a human-in-the-loop focus: AI is the future, but organizations must be
+    deliberate about where and how it takes over decisions.
+  # The email warns you if any of these appear in the draft.
+  banned_terms:
+    - SAS
+    - Viya
+    - Intelligent Decisioning
+    - Decision Builder
+    - open to work
+    - job search
+    - my next role
+    - next chapter
+    - hiring manager
+    - recruiter
