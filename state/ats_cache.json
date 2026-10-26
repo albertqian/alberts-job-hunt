@@ -1,0 +1,133 @@
+{
+  "Aera Technology": {
+    "ats": "lever",
+    "checked": "2026-10-26",
+    "slug": "aeratechnology"
+  },
+  "Alation": {
+    "ats": null,
+    "checked": "2026-10-26"
+  },
+  "C3 AI": {
+    "ats": "greenhouse",
+    "checked": "2026-10-26",
+    "slug": "c3iot"
+  },
+  "Collibra": {
+    "ats": "greenhouse",
+    "checked": "2026-10-26",
+    "slug": "collibra"
+  },
+  "Confluent": {
+    "ats": null,
+    "checked": "2026-10-26"
+  },
+  "DataRobot": {
+    "ats": null,
+    "checked": "2026-10-26"
+  },
+  "Databricks": {
+    "ats": "greenhouse",
+    "checked": "2026-10-26",
+    "slug": "databricks"
+  },
+  "Dataiku": {
+    "ats": "greenhouse",
+    "checked": "2026-10-26",
+    "slug": "dataiku"
+  },
+  "Deel": {
+    "ats": null,
+    "checked": "2026-10-26"
+  },
+  "Eightfold AI": {
+    "ats": null,
+    "checked": "2026-10-26"
+  },
+  "FICO": {
+    "ats": null,
+    "checked": "2026-10-26"
+  },
+  "Fivetran": {
+    "ats": "greenhouse",
+    "checked": "2026-10-26",
+    "slug": "fivetran"
+  },
+  "Greenhouse": {
+    "ats": "greenhouse",
+    "checked": "2026-10-26",
+    "slug": "greenhouse"
+  },
+  "Gusto": {
+    "ats": "greenhouse",
+    "checked": "2026-10-26",
+    "slug": "gusto"
+  },
+  "HiBob": {
+    "ats": null,
+    "checked": "2026-10-26"
+  },
+  "Lattice": {
+    "ats": "greenhouse",
+    "checked": "2026-10-26",
+    "slug": "lattice"
+  },
+  "Microsoft": {
+    "ats": null,
+    "checked": "2026-10-26"
+  },
+  "Palantir": {
+    "ats": "lever",
+    "checked": "2026-10-26",
+    "slug": "palantir"
+  },
+  "Pegasystems": {
+    "ats": null,
+    "checked": "2026-10-26"
+  },
+  "Provenir": {
+    "ats": null,
+    "checked": "2026-10-26"
+  },
+  "Quantexa": {
+    "ats": "ashby",
+    "checked": "2026-10-26",
+    "slug": "quantexa"
+  },
+  "Rippling": {
+    "ats": null,
+    "checked": "2026-10-26"
+  },
+  "Sigma Computing": {
+    "ats": "greenhouse",
+    "checked": "2026-10-26",
+    "slug": "sigmacomputing"
+  },
+  "Snowflake": {
+    "ats": "ashby",
+    "checked": "2026-10-26",
+    "slug": "snowflake"
+  },
+  "Starburst": {
+    "ats": "greenhouse",
+    "checked": "2026-10-26",
+    "slug": "starburst"
+  },
+  "ThoughtSpot": {
+    "ats": null,
+    "checked": "2026-10-26"
+  },
+  "Workday": {
+    "ats": null,
+    "checked": "2026-10-26"
+  },
+  "Writer": {
+    "ats": "ashby",
+    "checked": "2026-10-26",
+    "slug": "writer"
+  },
+  "dbt Labs": {
+    "ats": null,
+    "checked": "2026-10-26"
+  }
+}
