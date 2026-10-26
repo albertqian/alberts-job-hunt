@@ -1,0 +1,64 @@
+name: Job Search Agent
+
+on:
+  schedule:
+    # Tuesday and Friday at 14:00 UTC = 7:00am Pacific Daylight Time (6:00am during Standard Time).
+    # GitHub may start scheduled runs 5-30 minutes late during busy periods.
+    - cron: "0 14 * * 2,5"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (save report, don't send email)"
+        type: boolean
+        default: false
+      no_search:
+        description: "Skip web search (watchlist job boards only, cheapest test)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: job-search-agent
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run agent
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          CLAUDE_MODEL: ${{ vars.CLAUDE_MODEL }}
+        run: |
+          ARGS=""
+          if [ "${{ inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
+          if [ "${{ inputs.no_search }}" = "true" ]; then ARGS="$ARGS --no-search"; fi
+          if [ -z "$CLAUDE_MODEL" ]; then unset CLAUDE_MODEL; fi
+          python src/agent.py $ARGS
+
+      - name: Save report and job history to the repo
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports state
+          git diff --cached --quiet || git commit -m "Job search brief $(date -u +%F)"
+          git push
