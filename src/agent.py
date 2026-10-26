@@ -8,7 +8,7 @@ Runs on GitHub Actions (Tue + Fri). Each run:
      and to check watchlist companies that have no public job-board API.
   3. Filters by title, seniority, location and salary floor; skips roles already reported.
   4. Scores each new role 0-100 against your resume, with positioning and resume-tailoring advice.
-  5. Pulls this week's industry news, writes a positioning guide and a LinkedIn post in your voice.
+  5. Reads news RSS feeds (config/news_feeds.yaml), picks this week's top stories, writes a positioning guide and a LinkedIn post in your voice.
   6. Emails the brief and saves it to reports/ (job history goes to state/).
 
 Usage:
@@ -372,7 +372,8 @@ def extract_json(text: str):
     return None
 
 
-def ask_claude(system: str, prompt: str, max_tokens: int = 8000, web_searches: int = 0):
+def ask_claude(system: str, prompt: str, max_tokens: int = 8000, web_searches: int = 0,
+               tool_overrides: dict | None = None):
     """Call Claude, optionally with web search. Returns (text, set_of_urls_seen_in_search)."""
     messages = [{"role": "user", "content": prompt}]
     kwargs = dict(model=MODEL, max_tokens=max_tokens, system=system, messages=messages)
@@ -384,6 +385,7 @@ def ask_claude(system: str, prompt: str, max_tokens: int = 8000, web_searches: i
             "allowed_callers": ["direct"],
             "user_location": {"type": "approximate", "country": "US",
                               "region": "California", "timezone": "America/Los_Angeles"},
+            **(tool_overrides or {}),
         }]
     texts, urls = [], set()
     for _ in range(8):
@@ -488,26 +490,151 @@ Return ONLY a JSON array, no commentary. Each item:
     return jobs
 
 
-def fetch_news(profile: dict) -> list[dict]:
+RSS_HEADERS = {
+    "User-Agent": ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
+                   "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"),
+    "Accept": "application/rss+xml, application/xml;q=0.9, */*;q=0.8",
+}
+
+
+def fetch_feed(url: str):
+    import feedparser
+    try:
+        r = requests.get(url, headers=RSS_HEADERS, timeout=HTTP_TIMEOUT)
+        if r.status_code != 200:
+            return None, f"HTTP {r.status_code}"
+        parsed = feedparser.parse(r.content)
+        if parsed.bozo and not parsed.entries:
+            return None, "not a valid feed"
+        return parsed.entries, None
+    except requests.RequestException as e:
+        return None, type(e).__name__
+
+
+def _entry_date(entry) -> dt.date | None:
+    for field in ("published_parsed", "updated_parsed"):
+        t = entry.get(field)
+        if t:
+            return dt.date(t.tm_year, t.tm_mon, t.tm_mday)
+    return None
+
+
+def collect_rss_stories(cfg: dict) -> list[dict]:
+    cutoff = TODAY - dt.timedelta(days=cfg.get("lookback_days", 7))
+    kw = cfg.get("keywords") or []
+    kw_rx = re.compile(r"\b(" + "|".join(re.escape(k) for k in kw) + r")\b", re.I) if kw else None
+    stories, seen_titles = [], set()
+    for feed in cfg.get("feeds", []):
+        entries, err = fetch_feed(feed["url"])
+        label = f"{feed['outlet']} {feed.get('section', '')}".strip()
+        if err:
+            note(f"News feed failed: {label} ({err})")
+            continue
+        kept = 0
+        for e in entries:
+            date = _entry_date(e)
+            if date and date < cutoff:
+                continue
+            title = e.get("title", "")
+            if "news.google.com" in feed["url"]:
+                title = re.sub(r"\s+-\s+[^-]{2,40}$", "", title).strip()
+            summary = html_to_text(e.get("summary", ""))[:400]
+            if "news.google.com" in feed["url"]:
+                summary = ""  # Google News summaries just repeat the headline
+            if kw_rx and not kw_rx.search(f"{title} {summary}"):
+                continue
+            key = re.sub(r"[^a-z0-9]+", " ", title.lower()).strip()
+            if not key or key in seen_titles:
+                continue
+            seen_titles.add(key)
+            stories.append({"headline": title, "outlet": feed["outlet"], "url": e.get("link", ""),
+                            "date": date.isoformat() if date else "", "feed_summary": summary})
+            kept += 1
+        print(f"  {label}: {len(entries)} stories, {kept} on-topic", flush=True)
+    return stories
+
+
+def pick_news(stories: list[dict], profile: dict, cfg: dict) -> list[dict]:
+    """Have Claude choose the most relevant stories. Links/headlines come from the feeds."""
+    if not stories:
+        return []
+    stories = sorted(stories, key=lambda s: s["date"], reverse=True)[:120]
+    n = cfg.get("stories_to_pick", 5)
+    topics = "\n".join(f"- {t}" for t in profile["news_topics"])
+    listing = "\n".join(f"[{i}] {s['outlet']} ({s['date'] or 'recent'}): {s['headline']}"
+                        + (f" — {s['feed_summary']}" if s["feed_summary"] else "")
+                        for i, s in enumerate(stories))
+    system = ("You are an industry analyst for a B2B product marketer working in data/AI platforms, "
+              "decision intelligence and HR tech. Separate real industry developments from vendor PR.")
+    prompt = f"""Today is {TODAY.isoformat()}. From the stories below, pick the {n} most significant for these topics:
+{topics}
+
+Prefer stories with clear market impact (M&A, funding, major launches, earnings that signal a shift,
+regulation, layoffs or hiring trends, enterprise AI adoption) and avoid near-duplicates.
+Use only the information given; don't add facts that aren't in the headline or summary.
+
+STORIES:
+{listing}
+
+Return ONLY a JSON array of {n} items:
+[{{"id": <number in brackets>, "summary": "1-2 sentences based on the headline/summary",
+   "why_it_matters": "1-2 sentences for a B2B product marketer", "pr_or_news": "news | vendor PR"}}]"""
+    text, _ = ask_claude(system, prompt, max_tokens=3000)
+    picks = extract_json(text)
+    if not isinstance(picks, list):
+        note("News ranking returned unparseable output; using the most recent stories.")
+        picks = [{"id": i} for i in range(min(n, len(stories)))]
+    out = []
+    for p in picks:
+        try:
+            s = dict(stories[int(p["id"])])
+        except (KeyError, ValueError, IndexError, TypeError):
+            continue
+        s["summary"] = p.get("summary") or s["feed_summary"]
+        s["why_it_matters"] = p.get("why_it_matters", "")
+        s["pr_or_news"] = p.get("pr_or_news", "news")
+        out.append(s)
+    return out[:n]
+
+
+def search_news_fallback(profile: dict, cfg: dict, needed: int) -> list[dict]:
+    domains = cfg.get("fallback_web_search_domains") or []
     system = ("You are an industry analyst. Report only stories you found in search results in this "
               "conversation, with their exact URLs. Separate real industry developments from vendor PR.")
     topics = "\n".join(f"- {t}" for t in profile["news_topics"])
-    prompt = f"""Today is {TODAY.isoformat()}. Find the 5 most significant news stories from the past 7 days across:
+    prompt = f"""Today is {TODAY.isoformat()}. Find the {needed} most significant news stories from the past 7 days on:
 {topics}
 
-Favor stories covered by several outlets or with clear market impact (funding, M&A, major launches,
-analyst reports, regulation, layoffs/hiring shifts) over single-vendor press releases.
-
 Return ONLY a JSON array:
-[{{"headline": "", "outlet": "", "url": "", "date": "YYYY-MM-DD",
-   "summary": "2 sentences", "why_it_matters": "1-2 sentences for a B2B product marketer in data/AI/decisioning/HR tech",
-   "pr_or_news": "news | vendor PR"}}]"""
-    text, urls = ask_claude(system, prompt, max_tokens=4000, web_searches=profile["news_max_searches"])
+[{{"headline": "", "outlet": "", "url": "", "date": "YYYY-MM-DD", "summary": "2 sentences",
+   "why_it_matters": "1-2 sentences for a B2B product marketer", "pr_or_news": "news | vendor PR"}}]"""
+    messages_tool_override = {"allowed_domains": domains} if domains else {}
+    text, urls = ask_claude(system, prompt, max_tokens=4000, web_searches=profile["news_max_searches"],
+                            tool_overrides=messages_tool_override)
     items = extract_json(text)
     if not isinstance(items, list):
-        note("News search returned no parseable results.")
+        note("Fallback news search returned no parseable results.")
         return []
     return verify_links(items, urls)
+
+
+def fetch_news(profile: dict, allow_search: bool) -> list[dict]:
+    cfg = load_yaml(CONFIG_DIR / "news_feeds.yaml")
+    print("Reading news feeds…")
+    stories = collect_rss_stories(cfg)
+    news = pick_news(stories, profile, cfg)
+    minimum = cfg.get("min_stories_before_fallback", 3)
+    if len(news) < minimum:
+        if allow_search:
+            note(f"Only {len(news)} usable stories from feeds; topping up with web search on "
+                 f"{', '.join(cfg.get('fallback_web_search_domains') or [])}.")
+            try:
+                news += search_news_fallback(profile, cfg, cfg.get("stories_to_pick", 5) - len(news))
+            except Exception as e:
+                note(f"Fallback news search failed: {e}")
+        else:
+            note(f"Only {len(news)} usable stories from feeds (web search fallback skipped).")
+    return news
 
 
 # ---------------------------------------------------------------------------
@@ -772,18 +899,19 @@ def main() -> int:
         note("No public job-board API found for: " + ", ".join(c["name"] for c in no_api)
              + " (checked via web search instead).")
 
-    news = []
     if not args.no_search:
         print("Discovering roles via web search…")
         try:
             jobs += discover_jobs(profile, no_api, api_companies)
         except Exception as e:
             note(f"Discovery search failed: {e}")
-        print("Pulling industry news…")
-        try:
-            news = fetch_news(profile)
-        except Exception as e:
-            note(f"News search failed: {e}")
+
+    # News runs on every run (RSS feeds are free); web search is only a fallback.
+    try:
+        news = fetch_news(profile, allow_search=not args.no_search)
+    except Exception as e:
+        note(f"News step failed: {e}")
+        news = []
 
     filtered_count = sum(1 for n in RUN_NOTES if n.startswith("Filtered"))
 
