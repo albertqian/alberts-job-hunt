@@ -1,0 +1,92 @@
+# ---------------------------------------------------------------
+# News sources for the "Industry news" section and the LinkedIn post.
+#
+# The agent reads these RSS feeds (free), keeps stories from the last
+# `lookback_days` that mention your topics, and has Claude pick the
+# 5 most relevant. Headlines and links always come straight from the
+# feeds, never from Claude.
+#
+# CNN and Yahoo no longer publish working RSS feeds for business/tech
+# news, so those use Google News feeds limited to that site. Their
+# links open through Google News and then go to the original article.
+# ---------------------------------------------------------------
+
+lookback_days: 7
+stories_to_pick: 5
+
+feeds:
+  # CNBC (official feeds)
+  - {outlet: CNBC, section: Technology, url: "https://www.cnbc.com/id/19854910/device/rss/rss.html"}
+  - {outlet: CNBC, section: Business,   url: "https://www.cnbc.com/id/10001147/device/rss/rss.html"}
+  - {outlet: CNBC, section: Top News,   url: "https://www.cnbc.com/id/100003114/device/rss/rss.html"}
+
+  # Bloomberg (official feeds; headlines and summaries, articles may be paywalled)
+  - {outlet: Bloomberg, section: Technology, url: "https://www.bloomberg.com/feeds/technology/news.rss"}
+  - {outlet: Bloomberg, section: Business,   url: "https://www.bloomberg.com/feeds/business/news.rss"}
+  - {outlet: Bloomberg, section: Industries, url: "https://www.bloomberg.com/feeds/industries/news.rss"}
+
+  # CNN (official RSS is discontinued; Google News feed limited to cnn.com)
+  - outlet: CNN
+    section: Business & Tech
+    url: "https://news.google.com/rss/search?q=when:7d+site:cnn.com+(AI+OR+software+OR+tech+OR+jobs+OR+layoffs+OR+data)&hl=en-US&gl=US&ceid=US:en"
+
+  # Yahoo (official Yahoo Finance news feed is down; Google News feeds limited to Yahoo)
+  - outlet: Yahoo Finance
+    section: Business & Tech
+    url: "https://news.google.com/rss/search?q=when:7d+site:finance.yahoo.com+(AI+OR+software+OR+cloud+OR+data+OR+layoffs)&hl=en-US&gl=US&ceid=US:en"
+  - outlet: Yahoo Tech
+    section: Tech
+    url: "https://news.google.com/rss/search?q=when:7d+site:tech.yahoo.com+(AI+OR+software+OR+enterprise)&hl=en-US&gl=US&ceid=US:en"
+  # Yahoo Finance headlines for companies in your space (official feed, by stock symbol)
+  - outlet: Yahoo Finance
+    section: Company headlines
+    url: "https://feeds.finance.yahoo.com/rss/2.0/headline?s=SNOW,MSFT,ORCL,WDAY,PLTR,PEGA,FICO,CRM&region=US&lang=en-US"
+
+# A story must mention at least one of these (headline or summary) to be considered.
+# Matching ignores upper/lower case and whole words only.
+keywords:
+  - AI
+  - artificial intelligence
+  - agent
+  - agents
+  - agentic
+  - generative
+  - LLM
+  - OpenAI
+  - Anthropic
+  - Nvidia
+  - software
+  - SaaS
+  - cloud
+  - data
+  - analytics
+  - enterprise
+  - automation
+  - Microsoft
+  - Snowflake
+  - Databricks
+  - Salesforce
+  - Oracle
+  - Workday
+  - SAP
+  - IBM
+  - Palantir
+  - ServiceNow
+  - layoffs
+  - hiring
+  - workforce
+  - jobs
+  - HR
+  - regulation
+  - governance
+  - fraud
+  - cybersecurity
+
+# If the feeds yield fewer than this many usable stories, the agent tops up
+# with a web search limited to the same four sites (skipped with "Skip web search").
+min_stories_before_fallback: 3
+fallback_web_search_domains:
+  - cnn.com
+  - cnbc.com
+  - yahoo.com
+  - bloomberg.com
