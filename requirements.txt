@@ -2,3 +2,4 @@ anthropic>=0.70
 requests>=2.31
 pyyaml>=6.0
 markdown>=3.5
+feedparser>=6.0
