@@ -1,133 +1,133 @@
 {
   "Aera Technology": {
     "ats": "lever",
-    "checked": "2026-11-03",
+    "checked": "2026-11-06",
     "slug": "aeratechnology"
   },
   "Alation": {
     "ats": null,
-    "checked": "2026-11-03"
+    "checked": "2026-11-06"
   },
   "C3 AI": {
     "ats": "greenhouse",
-    "checked": "2026-11-03",
+    "checked": "2026-11-06",
     "slug": "c3iot"
   },
   "Collibra": {
     "ats": "greenhouse",
-    "checked": "2026-11-03",
+    "checked": "2026-11-06",
     "slug": "collibra"
   },
   "Confluent": {
     "ats": null,
-    "checked": "2026-11-03"
+    "checked": "2026-11-06"
   },
   "DataRobot": {
     "ats": null,
-    "checked": "2026-11-03"
+    "checked": "2026-11-06"
   },
   "Databricks": {
     "ats": "greenhouse",
-    "checked": "2026-11-03",
+    "checked": "2026-11-06",
     "slug": "databricks"
   },
   "Dataiku": {
     "ats": "greenhouse",
-    "checked": "2026-11-03",
+    "checked": "2026-11-06",
     "slug": "dataiku"
   },
   "Deel": {
     "ats": null,
-    "checked": "2026-11-03"
+    "checked": "2026-11-06"
   },
   "Eightfold AI": {
     "ats": null,
-    "checked": "2026-11-03"
+    "checked": "2026-11-06"
   },
   "FICO": {
     "ats": null,
-    "checked": "2026-11-03"
+    "checked": "2026-11-06"
   },
   "Fivetran": {
     "ats": "greenhouse",
-    "checked": "2026-11-03",
+    "checked": "2026-11-06",
     "slug": "fivetran"
   },
   "Greenhouse": {
     "ats": "greenhouse",
-    "checked": "2026-11-03",
+    "checked": "2026-11-06",
     "slug": "greenhouse"
   },
   "Gusto": {
     "ats": "greenhouse",
-    "checked": "2026-11-03",
+    "checked": "2026-11-06",
     "slug": "gusto"
   },
   "HiBob": {
     "ats": null,
-    "checked": "2026-11-03"
+    "checked": "2026-11-06"
   },
   "Lattice": {
     "ats": "greenhouse",
-    "checked": "2026-11-03",
+    "checked": "2026-11-06",
     "slug": "lattice"
   },
   "Microsoft": {
     "ats": null,
-    "checked": "2026-11-03"
+    "checked": "2026-11-06"
   },
   "Palantir": {
     "ats": "lever",
-    "checked": "2026-11-03",
+    "checked": "2026-11-06",
     "slug": "palantir"
   },
   "Pegasystems": {
     "ats": null,
-    "checked": "2026-11-03"
+    "checked": "2026-11-06"
   },
   "Provenir": {
     "ats": null,
-    "checked": "2026-11-03"
+    "checked": "2026-11-06"
   },
   "Quantexa": {
     "ats": "ashby",
-    "checked": "2026-11-03",
+    "checked": "2026-11-06",
     "slug": "quantexa"
   },
   "Rippling": {
     "ats": null,
-    "checked": "2026-11-03"
+    "checked": "2026-11-06"
   },
   "Sigma Computing": {
     "ats": "greenhouse",
-    "checked": "2026-11-03",
+    "checked": "2026-11-06",
     "slug": "sigmacomputing"
   },
   "Snowflake": {
     "ats": "ashby",
-    "checked": "2026-11-03",
+    "checked": "2026-11-06",
     "slug": "snowflake"
   },
   "Starburst": {
     "ats": "greenhouse",
-    "checked": "2026-11-03",
+    "checked": "2026-11-06",
     "slug": "starburst"
   },
   "ThoughtSpot": {
     "ats": null,
-    "checked": "2026-11-03"
+    "checked": "2026-11-06"
   },
   "Workday": {
     "ats": null,
-    "checked": "2026-11-03"
+    "checked": "2026-11-06"
   },
   "Writer": {
     "ats": "ashby",
-    "checked": "2026-11-03",
+    "checked": "2026-11-06",
     "slug": "writer"
   },
   "dbt Labs": {
     "ats": null,
-    "checked": "2026-11-03"
+    "checked": "2026-11-06"
   }
 }
